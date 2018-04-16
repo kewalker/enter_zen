@@ -12,7 +12,7 @@ def zen():
 	return ('hello from zen')
 
 @app.route('/user/<username>')
-	return ('User {}'.format(username))
+	return ('User %s' % username)
 
 
 if __name__ == "__main__":
