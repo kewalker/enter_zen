@@ -10,6 +10,13 @@ batch_size = 200
 epoch = 30
 temperature = 0.5
 
+def main():
+    #get data from https://s3.amazonaws.com/text-datasets/nietzsche.txt
+    text = read_data('haiku_lines.txt')
+    train_data, target_data, unique_chars, len_unique_chars = featurize(text)
+    print (unique_chars)
+    run(train_data, target_data, unique_chars, len_unique_chars)
+
 def read_data(file_name):
     '''
      open and read text file
@@ -78,9 +85,10 @@ def run(train_data, target_data, unique_chars, len_unique_chars):
 
     init_op = tf.global_variables_initializer()
     sess = tf.Session()
-    sess.run(init_op)
+    # sess.run(init_op)
 
     saver = tf.train.Saver()
+    saver.restore(sess, './model')
 
     num_batches = int(len(train_data)/batch_size)
 
@@ -91,8 +99,9 @@ def run(train_data, target_data, unique_chars, len_unique_chars):
             train_batch, target_batch = train_data[count:count+batch_size], target_data[count:count+batch_size]
             count += batch_size
             _, loss = sess.run([optimizer, cost] ,feed_dict={x:train_batch, y:target_batch})
-            if j % 25 == 0:
+            if j % 10 == 0:
                 print ('loss: {}'.format(loss))
+
         #get on of training set as seed
         seed = train_batch[:1:]
 
@@ -100,7 +109,7 @@ def run(train_data, target_data, unique_chars, len_unique_chars):
         seed_chars = ''
         for each in seed[0]:
                 seed_chars += unique_chars[np.where(each == max(each))[0][0]]
-        seed_chars = "a mountain path\n"
+        seed_chars = "a cherry blossom\nfallen on the mountain path..."
         print ("Seed:", seed_chars)
 
         #predict next 1000 characters
@@ -120,7 +129,4 @@ def run(train_data, target_data, unique_chars, len_unique_chars):
 
 
 if __name__ == "__main__":
-    #get data from https://s3.amazonaws.com/text-datasets/nietzsche.txt
-    text = read_data('rumi_cleaned.txt')
-    train_data, target_data, unique_chars, len_unique_chars = featurize(text)
-    run(train_data, target_data, unique_chars, len_unique_chars)
+    main()

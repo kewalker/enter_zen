@@ -1,3 +1,5 @@
+#compares first file with second file - removes any extra characters
+
 import numpy as np
 
 #set hyperparameters
