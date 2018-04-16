@@ -12,6 +12,7 @@ def zen():
 	return ('hello from zen')
 
 @app.route('/user/<username>')
+def user():	
 	return ('User %s' % username)
 
 
